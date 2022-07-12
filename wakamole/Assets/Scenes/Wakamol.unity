@@ -2158,7 +2158,10 @@ MonoBehaviour:
   questionPanel: {fileID: 1532089621}
   score: {fileID: 722866482}
   innerTimer: {fileID: 841660515}
-  timeUi: 0
+  scoreCounter: 0
+  timeRemaining: 0
+  maxTime: 0
+  timerIsRunning: 0
   correctSprites:
   - {fileID: 21300000, guid: 13b935fe80a181342b79e55f6e3b4201, type: 3}
   - {fileID: 21300000, guid: 6cbcf44d72f021b4f928c80c4c445f76, type: 3}
