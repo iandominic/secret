@@ -13,11 +13,13 @@ public class Wakamol : MonoBehaviour
     public Image[] correctChoices;
     public Image[] wrongChoices;
     public Sprite[] sprites;
-    public TMP_Text[] correctAns;
+    public Image blackOverlay;
+    public GameObject questionPanel;
     public TMP_Text score;
+    public Image innerTimer;
     int scoreCounter;
-    bool jasper;
-    int num = 1;
+    [SerializeField]
+    float timeUi;
     public Sprite[] correctSprites;
     public Sprite[] wrongSprites;
     public int intervalMin = 0;
@@ -25,16 +27,20 @@ public class Wakamol : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Invoke("RandomMoleSpawn", Random.Range(intervalMin, intervalMax));
-        Invoke("RandomMoleDespawn", Random.Range(intervalMin, intervalMax));
-        //setChoices();
-        RandomPos();
-        setSprites();
+        questionPanel.gameObject.SetActive(true);
+        blackOverlay.gameObject.SetActive(true);
+
+        // Invoke("RandomMoleSpawn", Random.Range(intervalMin, intervalMax));
+        // Invoke("RandomMoleDespawn", Random.Range(intervalMin, intervalMax));
+        // setChoices();
+        // RandomPos();
+        // setSprites();
     }
 
     void Update()
     {
         score.text = scoreCounter.ToString();
+        innerTimer.fillAmount = timeUi;
     }
     void setSprites() {
         for(int i = 0; i < correctChoices.Length; i++) {
@@ -56,6 +62,7 @@ public class Wakamol : MonoBehaviour
             choices[i].transform.SetSiblingIndex(Random.Range(0, choices.Length));
 
             // choices[i].transform.position = choices[Random.Range(0, choices.Length)].transform.position;
+
             // Vector3 tempPosition = object1.transform.position;
             // object1.transform.position = object2.transform.position;
             // object2.transform.position = tempPosition;
@@ -84,13 +91,28 @@ public class Wakamol : MonoBehaviour
         // int number;
 
         // int.TryParse(num, out number);
+        timeUi -= 5;
         scoreCounter--;
         //setChoices();
         moles[index].gameObject.SetActive(false);
     }
 
-    void Time(int time) {
+    public void StartGame() {
+        questionPanel.gameObject.SetActive(false);
+        blackOverlay.gameObject.SetActive(false);
 
+        Invoke("RandomMoleSpawn", Random.Range(intervalMin, intervalMax));
+        Invoke("RandomMoleDespawn", Random.Range(intervalMin, intervalMax));
+        //setChoices();
+        RandomPos();
+        setSprites();
+
+        BeginTimer(60f);
+    }
+
+    void BeginTimer(float time) {
+        timeUi = time;
+        timeUi -= 1;
     }
 }
 
