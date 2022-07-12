@@ -2158,6 +2158,7 @@ MonoBehaviour:
   questionPanel: {fileID: 1532089621}
   score: {fileID: 722866482}
   innerTimer: {fileID: 841660515}
+  timeUi: 0
   correctSprites:
   - {fileID: 21300000, guid: 13b935fe80a181342b79e55f6e3b4201, type: 3}
   - {fileID: 21300000, guid: 6cbcf44d72f021b4f928c80c4c445f76, type: 3}
@@ -2166,7 +2167,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 1ca1f07c20ee2c34c8224904e336fd31, type: 3}
   - {fileID: 21300000, guid: 2a8a96baa01a7be4695fc9ee8f961ede, type: 3}
   - {fileID: 21300000, guid: e946799445c7b72489a0133502a94897, type: 3}
-  intervalMin: 1
+  intervalMin: 0.4
   intervalMax: 1
 --- !u!4 &1358241782
 Transform:

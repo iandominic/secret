@@ -17,18 +17,24 @@ public class Wakamol : MonoBehaviour
     public GameObject questionPanel;
     public TMP_Text score;
     public Image innerTimer;
-    int scoreCounter;
+    public int scoreCounter;
     [SerializeField]
-    float timeUi;
+    public float timeRemaining;
+    public float maxTime;
+    public bool timerIsRunning = false;
     public Sprite[] correctSprites;
     public Sprite[] wrongSprites;
-    public int intervalMin = 0;
-    public int intervalMax = 1;
+
+    public float intervalMin = 0.4f;
+    public float intervalMax = 1f;
+
+    IEnumerator shuffleCoroutine;
     // Start is called before the first frame update
     void Start()
     {
         questionPanel.gameObject.SetActive(true);
         blackOverlay.gameObject.SetActive(true);
+        timeRemaining = maxTime;
 
         // Invoke("RandomMoleSpawn", Random.Range(intervalMin, intervalMax));
         // Invoke("RandomMoleDespawn", Random.Range(intervalMin, intervalMax));
@@ -40,7 +46,22 @@ public class Wakamol : MonoBehaviour
     void Update()
     {
         score.text = scoreCounter.ToString();
-        innerTimer.fillAmount = timeUi;
+
+        if (timerIsRunning)
+        {
+            if (timeRemaining > 0)
+            {
+                timeRemaining -= Time.deltaTime;
+                innerTimer.fillAmount = timeRemaining / maxTime;
+                Debug.Log("Time: " + timeRemaining);
+            }
+            else
+            {
+                Debug.Log("Time has run out!");
+                timeRemaining = 0;
+                timerIsRunning = false;
+            }
+        }
     }
     void setSprites() {
         for(int i = 0; i < correctChoices.Length; i++) {
@@ -91,7 +112,6 @@ public class Wakamol : MonoBehaviour
         // int number;
 
         // int.TryParse(num, out number);
-        timeUi -= 5;
         scoreCounter--;
         //setChoices();
         moles[index].gameObject.SetActive(false);
@@ -104,15 +124,62 @@ public class Wakamol : MonoBehaviour
         Invoke("RandomMoleSpawn", Random.Range(intervalMin, intervalMax));
         Invoke("RandomMoleDespawn", Random.Range(intervalMin, intervalMax));
         //setChoices();
-        RandomPos();
+        // RandomPos();
         setSprites();
-
-        BeginTimer(60f);
+        StartShuffle();
+        timerIsRunning = true;
+        BeginTimer(30f);
     }
 
     void BeginTimer(float time) {
-        timeUi = time;
-        timeUi -= 1;
+        maxTime = time;
+        timeRemaining = maxTime;
+    }
+    
+    public void StartShuffle() // call this on button click
+    {
+        if (shuffleCoroutine != null) return;
+
+        shuffleCoroutine = DoShuffle();
+        StartCoroutine(shuffleCoroutine);
+    }
+
+    IEnumerator DoShuffle()
+    {
+        List<Vector3> startPos = new List<Vector3>();
+        List<Vector3> endPos = new List<Vector3>();
+        foreach (Image mole in choices)
+        {
+            startPos.Add(mole.transform.position);
+            endPos.Add(mole.transform.position);
+        }
+
+        // shuffle endPos
+        for (int i = 0 ; i < endPos.Count ; i++) {
+            Vector3 temp = endPos[i];
+            int swapIndex = Random.Range(i, endPos.Count);
+            endPos[i] = endPos[swapIndex];
+            endPos[swapIndex] = temp;
+        }
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < 1)
+        {
+            // wait for next frame
+            yield return null;
+
+            // move each letter
+            elapsedTime  = Mathf.Min(1, elapsedTime+Time.deltaTime);
+            float t = elapsedTime / 1;
+
+            for (int i = 0 ; i < startPos.Count ; i++) {
+                choices[i].transform.position = Vector3.Lerp(startPos[i],endPos[i],t);
+            }
+        }  
+
+        // allow shuffling to occur again
+        shuffleCoroutine = null;
     }
 }
 
