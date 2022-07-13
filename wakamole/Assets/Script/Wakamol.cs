@@ -23,8 +23,11 @@ public class Wakamol : MonoBehaviour
     public Image go;
 
     public GameObject questionPanel;
+    public GameObject congratsPanel;
+    public GameObject timerUi;
     public TMP_Text score;
-    public int scoreCounter;
+    public int currentScore;
+    public int requiredScore;
 
     [SerializeField]
     public float timeRemaining;
@@ -42,16 +45,11 @@ public class Wakamol : MonoBehaviour
         questionPanel.gameObject.SetActive(true);
         blackOverlay.gameObject.SetActive(true);
         timeRemaining = maxTime;
-
-        // Invoke("RandomMoleSpawn", Random.Range(intervalMin, intervalMax));
-        // Invoke("RandomMoleDespawn", Random.Range(intervalMin, intervalMax));
-        // setChoices();
-        // RandomPos();
-        // setSprites();
+        requiredScore = 3;
     }
     void Update()
     {
-        score.text = scoreCounter.ToString();
+        score.text = currentScore.ToString();
 
         if (timerIsRunning)
         {
@@ -59,7 +57,6 @@ public class Wakamol : MonoBehaviour
             {
                 timeRemaining -= Time.deltaTime;
                 innerTimer.fillAmount = timeRemaining / maxTime;
-                Debug.Log("Time: " + timeRemaining);
             }
             else
             {
@@ -73,6 +70,7 @@ public class Wakamol : MonoBehaviour
         for(int i = 0; i < correctChoices.Length; i++) {
             correctChoices[i].sprite = correctSprites[Random.Range(0, correctChoices.Length)];
         }
+
         for(int i = 0; i < wrongChoices.Length; i++) {
             wrongChoices[i].sprite = wrongSprites[Random.Range(0, wrongChoices.Length)];
         }
@@ -87,13 +85,7 @@ public class Wakamol : MonoBehaviour
     void RandomPos() {
         for(int i = 0; i < choices.Length; i++) {
             choices[i].transform.SetSiblingIndex(Random.Range(0, choices.Length));
-
-            // choices[i].transform.position = choices[Random.Range(0, choices.Length)].transform.position;
-
-            // Vector3 tempPosition = object1.transform.position;
-            // object1.transform.position = object2.transform.position;
-            // object2.transform.position = tempPosition;
-        }
+        } 
     }
     void RandomMoleDespawn() {
         int randomIndex = Random.Range(0, moles.Length);
@@ -101,33 +93,47 @@ public class Wakamol : MonoBehaviour
          
         Invoke("RandomMoleDespawn", Random.Range(intervalMin, intervalMax));
     }
-    public void MoleClicked(int index) {
-        // Debug.Log(choices[index].transform.GetChild(0).GetComponent<TMP_Text>().text);
-        // string num = choices[index].transform.GetChild(0).GetComponent<TMP_Text>().text;
-        // int number;
+    void DespawnAllMoles() {
+        for(int i = 0; i < moles.Length; i++) {
+            moles[i].gameObject.SetActive(false);
+        }
 
-        // int.TryParse(num, out number);
-        scoreCounter++;
-        //setChoices();
+        CancelInvoke("RandomMoleSpawn");
+        CancelInvoke("RandomMoleDespawn");
+    }
+    public void MoleClicked(int index) {
+        currentScore++;
+
+        if(currentScore == requiredScore) {
+            Debug.Log("Completed");
+            timerUi.gameObject.SetActive(false);
+            congratsPanel.gameObject.SetActive(true);
+
+            DespawnAllMoles();
+        }
+        
         moles[index].gameObject.SetActive(false);
     }
     public void MoleClickedWrong(int index) {
-        // Debug.Log(choices[index].transform.GetChild(0).GetComponent<TMP_Text>().text);
-        // string num = choices[index].transform.GetChild(0).GetComponent<TMP_Text>().text;
-        // int number;
+        timeRemaining -= 5f;
 
-        // int.TryParse(num, out number);
-        scoreCounter--;
-        //setChoices();
         moles[index].gameObject.SetActive(false);
     }
     public void StartGame() {
         questionPanel.gameObject.SetActive(false);
         blackOverlay.gameObject.SetActive(false);
-        //setChoices();
-        // RandomPos();
+
         ready.gameObject.SetActive(true);
         StartCoroutine(Set());
+    }
+    public void NextLevel() {
+        requiredScore += 1;
+        currentScore = 0;
+
+        StartCoroutine(Set());
+
+        ready.gameObject.SetActive(true);
+        congratsPanel.gameObject.SetActive(false);
     }
     void BeginTimer(float time) {
         maxTime = time;
@@ -178,18 +184,19 @@ public class Wakamol : MonoBehaviour
         shuffleCoroutine = null;
     }
     IEnumerator Set() {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1.2f);
 
         ready.gameObject.SetActive(false);
         set.gameObject.SetActive(true);
         StartCoroutine(Go());
     }
     IEnumerator Go() {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1.6f);
 
         setSprites();
         StartShuffle();
         BeginTimer(30f);
+        timerUi.gameObject.SetActive(true);
         
         timerIsRunning = true;
 
@@ -199,6 +206,8 @@ public class Wakamol : MonoBehaviour
         set.gameObject.SetActive(false);
         go.gameObject.SetActive(true);
 
+        Debug.Log(requiredScore);
+
         StartCoroutine(Close());
     }
     IEnumerator Close() {
@@ -206,24 +215,4 @@ public class Wakamol : MonoBehaviour
 
          go.gameObject.SetActive(false);
     }
-    void CloseReady() {
-        ready.gameObject.SetActive(false);
-        set.gameObject.SetActive(false);
-        go.gameObject.SetActive(false);
-    }
 }
-
-/*
-    Correct moles
-    Wrong moles
-
-    Correct sprite => correct mole
-    Wrong sprite => wrong mole
-
-    Randomize items in array 
-    Randomize mole positions
-
-    time limit
-    levels
-
-*/
