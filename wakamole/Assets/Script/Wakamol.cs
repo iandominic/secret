@@ -24,6 +24,7 @@ public class Wakamol : MonoBehaviour
 
     public GameObject questionPanel;
     public GameObject congratsPanel;
+    public GameObject timesUpPanel;
     public GameObject timerUi;
     public TMP_Text score;
     public int currentScore;
@@ -34,6 +35,7 @@ public class Wakamol : MonoBehaviour
     public float maxTime;
 
     public bool timerIsRunning = false;
+    public bool isDone = true;
 
     public float intervalMin = 0.4f;
     public float intervalMax = 1f;
@@ -49,18 +51,23 @@ public class Wakamol : MonoBehaviour
     }
     void Update()
     {
-        score.text = currentScore.ToString();
+        score.text = currentScore.ToString() + "/" + requiredScore.ToString();
 
         if (timerIsRunning)
         {
-            if (timeRemaining > 0)
+            if (timeRemaining > 0 && !isDone)
             {
                 timeRemaining -= Time.deltaTime;
                 innerTimer.fillAmount = timeRemaining / maxTime;
             }
-            else
+            else if (timeRemaining <= 0 && !isDone)
             {
                 Debug.Log("Time has run out!");
+                timesUpPanel.gameObject.SetActive(true);
+                timerUi.gameObject.SetActive(false);
+
+                DespawnAllMoles();
+
                 timeRemaining = 0;
                 timerIsRunning = false;
             }
@@ -109,6 +116,8 @@ public class Wakamol : MonoBehaviour
             timerUi.gameObject.SetActive(false);
             congratsPanel.gameObject.SetActive(true);
 
+            isDone = true;
+
             DespawnAllMoles();
         }
         
@@ -122,8 +131,8 @@ public class Wakamol : MonoBehaviour
     public void StartGame() {
         questionPanel.gameObject.SetActive(false);
         blackOverlay.gameObject.SetActive(false);
-
         ready.gameObject.SetActive(true);
+
         StartCoroutine(Set());
     }
     public void NextLevel() {
@@ -134,6 +143,17 @@ public class Wakamol : MonoBehaviour
 
         ready.gameObject.SetActive(true);
         congratsPanel.gameObject.SetActive(false);
+    }
+    public void RetryLevel() {
+        requiredScore = requiredScore;
+        currentScore = 0;
+
+        StartCoroutine(Set());
+
+        ready.gameObject.SetActive(true);
+        timesUpPanel.gameObject.SetActive(false);
+
+        Debug.Log(requiredScore);
     }
     void BeginTimer(float time) {
         maxTime = time;
@@ -195,7 +215,8 @@ public class Wakamol : MonoBehaviour
 
         setSprites();
         StartShuffle();
-        BeginTimer(30f);
+        BeginTimer(20f);
+        isDone = false;
         timerUi.gameObject.SetActive(true);
         
         timerIsRunning = true;
