@@ -196,7 +196,7 @@ public class Wakamol : MonoBehaviour
             float t = elapsedTime / 1;
 
             for (int i = 0 ; i < startPos.Count ; i++) {
-                choices[i].transform.position = Vector3.Lerp(startPos[i],endPos[i],t);
+                choices[i].transform.position = Vector3.Lerp(startPos[i], endPos[i], t);
             }
         }  
 
@@ -227,7 +227,7 @@ public class Wakamol : MonoBehaviour
         set.gameObject.SetActive(false);
         go.gameObject.SetActive(true);
 
-        Debug.Log(requiredScore);
+        Debug.Log("Required score: " + requiredScore);
 
         StartCoroutine(Close());
     }
