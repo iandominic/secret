@@ -6,6 +6,8 @@ using TMPro;
 
 public class Wakamol : MonoBehaviour
 {
+    public List<Mole> moleObject = new List<Mole>();
+    public List<MoleSagot> moleObjectSagot = new List<MoleSagot>();
     public GameObject[] moles;
     public GameObject[] correctMoles;
     public GameObject[] wrongMoles;
@@ -13,9 +15,6 @@ public class Wakamol : MonoBehaviour
     public Image[] correctChoices;
     public Image[] wrongChoices;
     public Sprite[] sprites;
-    public Sprite[] correctSprites;
-    public Sprite[] wrongSprites;
-
     public Image blackOverlay;
     public Image innerTimer;
     public Image ready;
@@ -39,11 +38,21 @@ public class Wakamol : MonoBehaviour
 
     public float intervalMin = 0.4f;
     public float intervalMax = 1f;
-
+    bool deSpawned;
     IEnumerator shuffleCoroutine;
-
+    int setSpritesBool;
     void Start()
     {
+        setSpritesBool = Random.Range(0, moleObjectSagot.Count);
+        moleObjectSagot.Add(new MoleSagot(moles[0], sprites[0], true, false));
+        moleObjectSagot.Add(new MoleSagot(moles[1], sprites[1], true, false));
+        moleObjectSagot.Add(new MoleSagot(moles[2], sprites[2], true, false));
+        
+        moleObjectSagot.Add(new MoleSagot(moles[3], sprites[3], false, false));
+        moleObjectSagot.Add(new MoleSagot(moles[4], sprites[4], false, false));
+        moleObjectSagot.Add(new MoleSagot(moles[5], sprites[5], false, false));
+
+        Debug.Log(moleObjectSagot.Count);
         questionPanel.gameObject.SetActive(true);
         blackOverlay.gameObject.SetActive(true);
         timeRemaining = maxTime;
@@ -72,32 +81,48 @@ public class Wakamol : MonoBehaviour
                 timerIsRunning = false;
             }
         }
+
+    }
+    IEnumerator WaitSpawn() {
+        yield return new WaitForSeconds(1);
+        RandomMoleDespawn();
+    }
+    void CheckIfVisible() {
+        for(int i = 0; i < moleObjectSagot.Count; i++) {
+            if(moleObjectSagot[i].IsVisible == false) {
+                int randomIndex = Random.Range(0, moleObjectSagot.Count);
+                choices[i].sprite = moleObjectSagot[randomIndex].Obj;
+                moles[i].transform.GetChild(1).GetComponent<TMP_Text>().text = moleObjectSagot[randomIndex].IsRight.ToString();
+            }
+            else {
+                continue;
+            }
+        }
     }
     void setSprites() {
-        for(int i = 0; i < correctChoices.Length; i++) {
-            correctChoices[i].sprite = correctSprites[Random.Range(0, correctChoices.Length)];
-        }
-
-        for(int i = 0; i < wrongChoices.Length; i++) {
-            wrongChoices[i].sprite = wrongSprites[Random.Range(0, wrongChoices.Length)];
+        int index = Random.Range(0, moleObjectSagot.Count);
+        for(int i = 0; i < moleObjectSagot.Count; i++) {
+            choices[i].sprite = moleObjectSagot[index].Obj;
+            moles[i].transform.GetChild(1).GetComponent<TMP_Text>().text = moleObjectSagot[index].IsRight.ToString();
         }
     }
     void RandomMoleSpawn() {
         int randomIndex = Random.Range(0, moles.Length);
-        moles[randomIndex].transform.SetSiblingIndex(Random.Range(0, moles.Length));
-        moles[randomIndex].gameObject.SetActive(true);
+        // moleObjectSagot[randomIndex].SetSiblingIndex(Random.Range(0, moles.Length));
+        moleObjectSagot[randomIndex].Mole.gameObject.SetActive(true);
+
+        moleObjectSagot[randomIndex].IsVisible = true;
 
         Invoke("RandomMoleSpawn", Random.Range(intervalMin, intervalMax));
     }
-    void RandomPos() {
-        for(int i = 0; i < choices.Length; i++) {
-            choices[i].transform.SetSiblingIndex(Random.Range(0, choices.Length));
-        } 
-    }
     void RandomMoleDespawn() {
         int randomIndex = Random.Range(0, moles.Length);
-        moles[randomIndex].gameObject.SetActive(false);
-         
+        moleObjectSagot[randomIndex].Mole.gameObject.SetActive(false);
+
+        moleObjectSagot[randomIndex].IsVisible = false;
+
+        CheckIfVisible();
+
         Invoke("RandomMoleDespawn", Random.Range(intervalMin, intervalMax));
     }
     void DespawnAllMoles() {
@@ -109,23 +134,42 @@ public class Wakamol : MonoBehaviour
         CancelInvoke("RandomMoleDespawn");
     }
     public void MoleClicked(int index) {
-        currentScore++;
+            // if(moleObjectSagot[index].IsRight == true) {
+            //     currentScore++;
+            //     Debug.Log(currentScore);
 
-        if(currentScore == requiredScore) {
-            Debug.Log("Completed");
-            timerUi.gameObject.SetActive(false);
-            congratsPanel.gameObject.SetActive(true);
+            //     if(currentScore == requiredScore) {
+            //         Debug.Log("Completed");
+            //         timerUi.gameObject.SetActive(false);
+            //         congratsPanel.gameObject.SetActive(true);
 
-            isDone = true;
+            //         isDone = true;
 
-            DespawnAllMoles();
+            //         DespawnAllMoles();
+            //     }
+            // }
+            // else if(moleObjectSagot[index].IsRight == false){
+            //     currentScore--;
+            //     Debug.Log(currentScore);
+            // }
+        if(moles[index].transform.GetChild(1).GetComponent<TMP_Text>().text == "True") {
+            currentScore++;
+            Debug.Log(currentScore);
+            if(currentScore == requiredScore) {
+                    Debug.Log("Completed");
+                    timerUi.gameObject.SetActive(false);
+                    congratsPanel.gameObject.SetActive(true);
+
+                    isDone = true;
+
+                    DespawnAllMoles();
+            }
+        } else {
+            currentScore--;
+            Debug.Log(currentScore);
         }
-        
-        moles[index].gameObject.SetActive(false);
-    }
-    public void MoleClickedWrong(int index) {
-        timeRemaining -= 5f;
 
+        Debug.Log(moles[index].transform.GetChild(0).name);
         moles[index].gameObject.SetActive(false);
     }
     public void StartGame() {
@@ -159,50 +203,6 @@ public class Wakamol : MonoBehaviour
         maxTime = time;
         timeRemaining = maxTime;
     }
-    public void StartShuffle() // call this on button click
-    {
-        if (shuffleCoroutine != null) return;
-
-        shuffleCoroutine = DoShuffle();
-        StartCoroutine(shuffleCoroutine);
-    }
-    IEnumerator DoShuffle()
-    {
-        List<Vector3> startPos = new List<Vector3>();
-        List<Vector3> endPos = new List<Vector3>();
-        foreach (Image mole in choices)
-        {
-            startPos.Add(mole.transform.position);
-            endPos.Add(mole.transform.position);
-        }
-
-        // shuffle endPos
-        for (int i = 0 ; i < endPos.Count ; i++) {
-            Vector3 temp = endPos[i];
-            int swapIndex = Random.Range(i, endPos.Count);
-            endPos[i] = endPos[swapIndex];
-            endPos[swapIndex] = temp;
-        }
-
-        float elapsedTime = 0f;
-
-        while (elapsedTime < 1)
-        {
-            // wait for next frame
-            yield return null;
-
-            // move each letter
-            elapsedTime  = Mathf.Min(1, elapsedTime+Time.deltaTime);
-            float t = elapsedTime / 1;
-
-            for (int i = 0 ; i < startPos.Count ; i++) {
-                choices[i].transform.position = Vector3.Lerp(startPos[i], endPos[i], t);
-            }
-        }  
-
-        // allow shuffling to occur again
-        shuffleCoroutine = null;
-    }
     IEnumerator Set() {
         yield return new WaitForSeconds(1.2f);
 
@@ -214,7 +214,6 @@ public class Wakamol : MonoBehaviour
         yield return new WaitForSeconds(1.6f);
 
         setSprites();
-        StartShuffle();
         BeginTimer(20f);
         isDone = false;
         timerUi.gameObject.SetActive(true);
