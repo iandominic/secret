@@ -38,16 +38,11 @@ public class Wakamol : MonoBehaviour
 
     public float intervalMin = 0.4f;
     public float intervalMax = 1f;
-    bool deSpawned;
-    IEnumerator shuffleCoroutine;
-    int setSpritesBool;
     void Start()
     {
-        setSpritesBool = Random.Range(0, moleObjectSagot.Count);
         moleObjectSagot.Add(new MoleSagot(moles[0], sprites[0], true, false));
         moleObjectSagot.Add(new MoleSagot(moles[1], sprites[1], true, false));
         moleObjectSagot.Add(new MoleSagot(moles[2], sprites[2], true, false));
-        
         moleObjectSagot.Add(new MoleSagot(moles[3], sprites[3], false, false));
         moleObjectSagot.Add(new MoleSagot(moles[4], sprites[4], false, false));
         moleObjectSagot.Add(new MoleSagot(moles[5], sprites[5], false, false));
@@ -93,6 +88,7 @@ public class Wakamol : MonoBehaviour
                 int randomIndex = Random.Range(0, moleObjectSagot.Count);
                 choices[i].sprite = moleObjectSagot[randomIndex].Obj;
                 moles[i].transform.GetChild(1).GetComponent<TMP_Text>().text = moleObjectSagot[randomIndex].IsRight.ToString();
+                moles[i].transform.GetChild(1).name = moleObjectSagot[randomIndex].IsRight.ToString();
             }
             else {
                 continue;
@@ -103,12 +99,10 @@ public class Wakamol : MonoBehaviour
         int index = Random.Range(0, moleObjectSagot.Count);
         for(int i = 0; i < moleObjectSagot.Count; i++) {
             choices[i].sprite = moleObjectSagot[index].Obj;
-            moles[i].transform.GetChild(1).GetComponent<TMP_Text>().text = moleObjectSagot[index].IsRight.ToString();
         }
     }
     void RandomMoleSpawn() {
         int randomIndex = Random.Range(0, moles.Length);
-        // moleObjectSagot[randomIndex].SetSiblingIndex(Random.Range(0, moles.Length));
         moleObjectSagot[randomIndex].Mole.gameObject.SetActive(true);
 
         moleObjectSagot[randomIndex].IsVisible = true;
@@ -134,24 +128,6 @@ public class Wakamol : MonoBehaviour
         CancelInvoke("RandomMoleDespawn");
     }
     public void MoleClicked(int index) {
-            // if(moleObjectSagot[index].IsRight == true) {
-            //     currentScore++;
-            //     Debug.Log(currentScore);
-
-            //     if(currentScore == requiredScore) {
-            //         Debug.Log("Completed");
-            //         timerUi.gameObject.SetActive(false);
-            //         congratsPanel.gameObject.SetActive(true);
-
-            //         isDone = true;
-
-            //         DespawnAllMoles();
-            //     }
-            // }
-            // else if(moleObjectSagot[index].IsRight == false){
-            //     currentScore--;
-            //     Debug.Log(currentScore);
-            // }
         if(moles[index].transform.GetChild(1).GetComponent<TMP_Text>().text == "True") {
             currentScore++;
             Debug.Log(currentScore);
@@ -169,7 +145,6 @@ public class Wakamol : MonoBehaviour
             Debug.Log(currentScore);
         }
 
-        Debug.Log(moles[index].transform.GetChild(0).name);
         moles[index].gameObject.SetActive(false);
     }
     public void StartGame() {
