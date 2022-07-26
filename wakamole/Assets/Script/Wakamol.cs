@@ -11,6 +11,7 @@ public class Wakamol : MonoBehaviour
     public GameObject[] moles;
     public GameObject[] correctMoles;
     public GameObject[] wrongMoles;
+    public Animator[] moleAnim;
     public Image[] choices;
     public Image[] correctChoices;
     public Image[] wrongChoices;
@@ -82,6 +83,10 @@ public class Wakamol : MonoBehaviour
         yield return new WaitForSeconds(1);
         RandomMoleDespawn();
     }
+    IEnumerator WaitAnimation() {
+        yield return new WaitForSeconds(1);
+        CheckIfVisible();
+    }
     void CheckIfVisible() {
         for(int i = 0; i < moleObjectSagot.Count; i++) {
             if(moleObjectSagot[i].IsVisible == false) {
@@ -103,7 +108,9 @@ public class Wakamol : MonoBehaviour
     }
     void RandomMoleSpawn() {
         int randomIndex = Random.Range(0, moles.Length);
-        moleObjectSagot[randomIndex].Mole.gameObject.SetActive(true);
+        moleAnim[randomIndex].gameObject.SetActive(true);
+        moleAnim[randomIndex].SetBool("Spawn", true);
+        moleAnim[randomIndex].SetBool("Despawn", false);
 
         moleObjectSagot[randomIndex].IsVisible = true;
 
@@ -111,17 +118,19 @@ public class Wakamol : MonoBehaviour
     }
     void RandomMoleDespawn() {
         int randomIndex = Random.Range(0, moles.Length);
-        moleObjectSagot[randomIndex].Mole.gameObject.SetActive(false);
+        moleAnim[randomIndex].SetBool("Spawn", false);
+        moleAnim[randomIndex].SetBool("Despawn", true);
 
         moleObjectSagot[randomIndex].IsVisible = false;
 
-        CheckIfVisible();
+        StartCoroutine(WaitAnimation());
 
         Invoke("RandomMoleDespawn", Random.Range(intervalMin, intervalMax));
     }
     void DespawnAllMoles() {
         for(int i = 0; i < moles.Length; i++) {
-            moles[i].gameObject.SetActive(false);
+            moleAnim[i].SetBool("Despawn", true);
+            moleAnim[i].SetBool("Spawn", false);
         }
 
         CancelInvoke("RandomMoleSpawn");
@@ -145,7 +154,8 @@ public class Wakamol : MonoBehaviour
             Debug.Log(currentScore);
         }
 
-        moles[index].gameObject.SetActive(false);
+        moleAnim[index].SetBool("Despawn", true);
+        moleAnim[index].SetBool("Spawn", false);
     }
     public void StartGame() {
         questionPanel.gameObject.SetActive(false);
