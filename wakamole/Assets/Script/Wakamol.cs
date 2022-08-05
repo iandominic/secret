@@ -8,13 +8,13 @@ public class Wakamol : MonoBehaviour
 {
     public List<Mole> moleObject = new List<Mole>();
     public List<MoleSagot> moleObjectSagot = new List<MoleSagot>();
-    public GameObject[] moles;
+    public Button[] moles;
     public GameObject[] correctMoles;
     public GameObject[] wrongMoles;
     public Animator[] moleAnim;
     public Image[] choices;
-    public Image[] correctChoices;
-    public Image[] wrongChoices;
+    public Sprite[] correctChoices;
+    public Sprite[] wrongChoices;
     public Sprite[] sprites;
     public Image blackOverlay;
     public Image innerTimer;
@@ -41,12 +41,12 @@ public class Wakamol : MonoBehaviour
     public float intervalMax = 1f;
     void Start()
     {
-        moleObjectSagot.Add(new MoleSagot(moles[0], sprites[0], true, false));
-        moleObjectSagot.Add(new MoleSagot(moles[1], sprites[1], true, false));
-        moleObjectSagot.Add(new MoleSagot(moles[2], sprites[2], true, false));
-        moleObjectSagot.Add(new MoleSagot(moles[3], sprites[3], false, false));
-        moleObjectSagot.Add(new MoleSagot(moles[4], sprites[4], false, false));
-        moleObjectSagot.Add(new MoleSagot(moles[5], sprites[5], false, false));
+        moleObjectSagot.Add(new MoleSagot(moles[0], correctChoices[0], true, false));
+        moleObjectSagot.Add(new MoleSagot(moles[1], correctChoices[1], true, false));
+        moleObjectSagot.Add(new MoleSagot(moles[2], correctChoices[2], true, false));
+        moleObjectSagot.Add(new MoleSagot(moles[3], wrongChoices[0], false, false));
+        moleObjectSagot.Add(new MoleSagot(moles[4], wrongChoices[1], false, false));
+        moleObjectSagot.Add(new MoleSagot(moles[5], wrongChoices[2], false, false));
 
         Debug.Log(moleObjectSagot.Count);
         questionPanel.gameObject.SetActive(true);
@@ -56,6 +56,7 @@ public class Wakamol : MonoBehaviour
     }
     void Update()
     {
+       
         score.text = currentScore.ToString() + "/" + requiredScore.ToString();
 
         if (timerIsRunning)
@@ -77,7 +78,7 @@ public class Wakamol : MonoBehaviour
                 timerIsRunning = false;
             }
         }
-
+        
     }
     IEnumerator WaitSpawn() {
         yield return new WaitForSeconds(1);
@@ -86,13 +87,28 @@ public class Wakamol : MonoBehaviour
     IEnumerator WaitAnimation() {
         yield return new WaitForSeconds(1);
         CheckIfVisible();
+         CheckIfDone();
+    }
+    void CheckIfDone() {
+        for(int i = 0; i < moles.Length; i++) {
+            if(moles[i].interactable == false) {
+                moles[i].interactable = true;
+            }
+        }
     }
     void CheckIfVisible() {
         for(int i = 0; i < moleObjectSagot.Count; i++) {
-            if(moleObjectSagot[i].IsVisible == false) {
+            if(moleObjectSagot[i].IsVisible == false && moleObjectSagot[i].IsRight == true) {
+                int randomIndexx = Random.Range(0, moleObjectSagot.Count);
+                moleObjectSagot[i].Obj = correctChoices[Random.Range(0, correctChoices.Length)];
+                choices[i].sprite = moleObjectSagot[randomIndexx].Obj;  
+                moles[i].transform.GetChild(1).name = moleObjectSagot[randomIndexx].IsRight.ToString();
+            }
+            
+            if(moleObjectSagot[i].IsVisible == false && moleObjectSagot[i].IsRight == false) {
                 int randomIndex = Random.Range(0, moleObjectSagot.Count);
-                choices[i].sprite = moleObjectSagot[randomIndex].Obj;
-                moles[i].transform.GetChild(1).GetComponent<TMP_Text>().text = moleObjectSagot[randomIndex].IsRight.ToString();
+                moleObjectSagot[i].Obj = wrongChoices[Random.Range(0, wrongChoices.Length)];
+                choices[i].sprite = moleObjectSagot[randomIndex].Obj;  
                 moles[i].transform.GetChild(1).name = moleObjectSagot[randomIndex].IsRight.ToString();
             }
             else {
@@ -104,6 +120,7 @@ public class Wakamol : MonoBehaviour
         int index = Random.Range(0, moleObjectSagot.Count);
         for(int i = 0; i < moleObjectSagot.Count; i++) {
             choices[i].sprite = moleObjectSagot[index].Obj;
+            moles[i].transform.GetChild(1).name = moleObjectSagot[index].IsRight.ToString();
         }
     }
     void RandomMoleSpawn() {
@@ -122,7 +139,7 @@ public class Wakamol : MonoBehaviour
         moleAnim[randomIndex].SetBool("Despawn", true);
 
         moleObjectSagot[randomIndex].IsVisible = false;
-
+        
         StartCoroutine(WaitAnimation());
 
         Invoke("RandomMoleDespawn", Random.Range(intervalMin, intervalMax));
@@ -137,7 +154,7 @@ public class Wakamol : MonoBehaviour
         CancelInvoke("RandomMoleDespawn");
     }
     public void MoleClicked(int index) {
-        if(moles[index].transform.GetChild(1).GetComponent<TMP_Text>().text == "True") {
+        if(moles[index].transform.GetChild(1).GetComponent<TMP_Text>().name == "True") {
             currentScore++;
             Debug.Log(currentScore);
             if(currentScore == requiredScore) {
@@ -149,13 +166,14 @@ public class Wakamol : MonoBehaviour
 
                     DespawnAllMoles();
             }
-        } else {
+        } else if(moles[index].transform.GetChild(1).GetComponent<TMP_Text>().name == "False"){
             currentScore--;
             Debug.Log(currentScore);
         }
-
         moleAnim[index].SetBool("Despawn", true);
         moleAnim[index].SetBool("Spawn", false);
+
+        moles[index].interactable = false;
     }
     public void StartGame() {
         questionPanel.gameObject.SetActive(false);
@@ -199,7 +217,7 @@ public class Wakamol : MonoBehaviour
         yield return new WaitForSeconds(1.6f);
 
         setSprites();
-        BeginTimer(20f);
+        BeginTimer(80f);
         isDone = false;
         timerUi.gameObject.SetActive(true);
         

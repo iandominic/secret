@@ -1,20 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MoleSagot
 {
-    GameObject mole;
+    Button mole;
     Sprite obj;
     bool isRight;
     bool isVisible;
-    public MoleSagot(GameObject mole, Sprite obj, bool isRight, bool isVisible) {
+    public MoleSagot(Button mole, Sprite obj, bool isRight, bool isVisible) {
         this.mole = mole;
         this.obj = obj;
         this.isRight = isRight;
         this.isVisible = isVisible;
     }
-    public GameObject Mole {
+    public Button Mole {
         get { return mole; }
         set { mole = value; }
     }
