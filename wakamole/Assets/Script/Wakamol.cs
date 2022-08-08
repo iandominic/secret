@@ -78,6 +78,12 @@ public class Wakamol : MonoBehaviour
                 timerIsRunning = false;
             }
         }
+
+        for(int i = 0; i < moleObjectSagot.Count; i++) {
+            if(moleObjectSagot[i].IsVisible == false) {
+                moles[i].interactable = true;
+            }
+        }
         
     }
     IEnumerator WaitSpawn() {
@@ -87,7 +93,6 @@ public class Wakamol : MonoBehaviour
     IEnumerator WaitAnimation() {
         yield return new WaitForSeconds(1);
         CheckIfVisible();
-         CheckIfDone();
     }
     void CheckIfDone() {
         for(int i = 0; i < moles.Length; i++) {
@@ -111,8 +116,12 @@ public class Wakamol : MonoBehaviour
                 choices[i].sprite = moleObjectSagot[randomIndex].Obj;  
                 moles[i].transform.GetChild(1).name = moleObjectSagot[randomIndex].IsRight.ToString();
             }
+
+            if(moleObjectSagot[i].IsVisible == true) {
+                moles[i].interactable = true;
+            }
             else {
-                continue;
+                moles[i].interactable = false;
             }
         }
     }
@@ -170,6 +179,7 @@ public class Wakamol : MonoBehaviour
             currentScore--;
             Debug.Log(currentScore);
         }
+
         moleAnim[index].SetBool("Despawn", true);
         moleAnim[index].SetBool("Spawn", false);
 
