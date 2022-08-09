@@ -56,7 +56,7 @@ public class Wakamol : MonoBehaviour
     }
     void Update()
     {
-       
+        CheckIfVisible();
         score.text = currentScore.ToString() + "/" + requiredScore.ToString();
 
         if (timerIsRunning)
@@ -78,8 +78,6 @@ public class Wakamol : MonoBehaviour
                 timerIsRunning = false;
             }
         }
-        
-
     }
     public void CheckIfDone() {
         for(int i = 0; i < moleObjectSagot.Count; i++) {
@@ -97,16 +95,16 @@ public class Wakamol : MonoBehaviour
             moles[i].GetComponent<Image>().color = Color.white;
            
             if(moleObjectSagot[i].IsVisible == false) {
-                if( moleObjectSagot[i].IsRight == true) {
+                if(moleObjectSagot[i].IsRight == true) {
                     int randomIndex = Random.Range(0, moleObjectSagot.Count);
                     moleObjectSagot[i].Obj = correctChoices[Random.Range(0, correctChoices.Length)];
-                    moleObjectSagot[i].Mole.transform.GetChild(0).GetComponent<Image>().sprite = moleObjectSagot[i].Obj;  
+                    moleObjectSagot[i].Mole.transform.GetChild(0).GetComponent<Image>().sprite = moleObjectSagot[randomIndex].Obj;  
                     moleObjectSagot[i].Mole.transform.GetChild(1).name = moleObjectSagot[randomIndex].IsRight.ToString();
                 }
                 else if(moleObjectSagot[i].IsRight == false) {
                     int randomIndexx = Random.Range(0, moleObjectSagot.Count);
                     moleObjectSagot[i].Obj = wrongChoices[Random.Range(0, wrongChoices.Length)];
-                    moleObjectSagot[i].Mole.transform.GetChild(0).GetComponent<Image>().sprite = moleObjectSagot[i].Obj; 
+                    moleObjectSagot[i].Mole.transform.GetChild(0).GetComponent<Image>().sprite = moleObjectSagot[randomIndexx].Obj; 
                     moleObjectSagot[i].Mole.transform.GetChild(1).name = moleObjectSagot[randomIndexx].IsRight.ToString(); 
                 }
             }   
@@ -137,7 +135,6 @@ public class Wakamol : MonoBehaviour
         moleAnim[randomIndex].SetBool("Despawn", false);
 
         moleObjectSagot[randomIndex].IsVisible = true;
-
         
         // CheckIfVisibleWrong();
 
@@ -148,7 +145,7 @@ public class Wakamol : MonoBehaviour
         moleAnim[randomIndex].SetBool("Spawn", false);
         moleAnim[randomIndex].SetBool("Despawn", true);
 
-        moleObjectSagot[randomIndex].IsVisible = false;
+        // moleObjectSagot[randomIndex].IsVisible = false;
         
 
         Invoke("RandomMoleDespawn", Random.Range(intervalMin, intervalMax));

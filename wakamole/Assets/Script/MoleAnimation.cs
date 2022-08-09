@@ -29,32 +29,38 @@ public class MoleAnimation : MonoBehaviour
         // btn.interactable = true;
         Debug.Log("zxczc");
         // wakamol.CheckIfVisible();
+         wakamol.moleObjectSagot[0].IsVisible = false;
     }
      public void Interactable2() {
         // btn2.interactable = true;
         Debug.Log("zxczc");
         // wakamol.CheckIfVisible();
     
+    wakamol.moleObjectSagot[1].IsVisible = false;
     }
      public void Interactable3() {
         // btn3.interactable = true;
         Debug.Log("zxczc");
         // wakamol.CheckIfVisible();
+        wakamol.moleObjectSagot[2].IsVisible = false;
     }
      public void Interactable4() {
         // btn4.interactable = true;
         Debug.Log("zxczc");
         // wakamol.CheckIfVisible();
+        wakamol.moleObjectSagot[3].IsVisible = false;
     }
      public void Interactable5() {
         // btn5.interactable = true;
         Debug.Log("zxczc");
         // wakamol.CheckIfVisible();
+        wakamol.moleObjectSagot[4].IsVisible = false;
     }
      public void Interactable6() {
         // btn6.interactable = true;
         Debug.Log("zxczc");
         // wakamol.CheckIfVisible();
+        wakamol.moleObjectSagot[5].IsVisible = false;
     }
     //////////////////////////////////////////
     public void test() { 
