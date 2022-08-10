@@ -113,6 +113,9 @@ public class Wakamol : MonoBehaviour
                     moleObjectSagot[i].Mole.transform.GetChild(1).name = moleObjectSagot[randomIndexx].IsRight.ToString(); 
                 }
             }   
+            else {
+                continue;
+            }
         }
     }
     void setSprites() {
@@ -236,7 +239,6 @@ public class Wakamol : MonoBehaviour
         
         moleAnim[index].SetBool("Despawn", true);
         moleAnim[index].SetBool("Spawn", false);
-
         moles[index].interactable = false;
         moles[index].transform.GetChild(0).gameObject.SetActive(false);
     }
