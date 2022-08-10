@@ -41,7 +41,7 @@ public class Wakamol : MonoBehaviour
     public bool isDone = true;
 
     public float intervalMin = 0.4f;
-    public float intervalMax = 1f;
+    public float intervalMax = 2f;
     void Start()
     {
         moleObjectSagot.Add(new MoleSagot(moles[0], correctChoices[0], true, false));
