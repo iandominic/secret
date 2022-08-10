@@ -8,10 +8,14 @@ public class Wakamol : MonoBehaviour
 {
     public List<Mole> moleObject = new List<Mole>();
     public List<MoleSagot> moleObjectSagot = new List<MoleSagot>();
+    public Sprite star;
+    public Sprite wrong;
+    public Image[] correctOrWrong;
     public Button[] moles;
     public GameObject[] correctMoles;
     public GameObject[] wrongMoles;
     public Animator[] moleAnim;
+    public Animator[] starsAnim;
     public Image[] choices;
     public Sprite[] correctChoices;
     public Sprite[] wrongChoices;
@@ -21,7 +25,6 @@ public class Wakamol : MonoBehaviour
     public Image ready;
     public Image set;
     public Image go;
-
     public GameObject questionPanel;
     public GameObject congratsPanel;
     public GameObject timesUpPanel;
@@ -93,8 +96,10 @@ public class Wakamol : MonoBehaviour
         for(int i = 0; i < moleObjectSagot.Count; i++) {
 
             moles[i].GetComponent<Image>().color = Color.white;
-           
+
+            
             if(moleObjectSagot[i].IsVisible == false) {
+                moleObjectSagot[i].Mole.transform.GetChild(0).gameObject.SetActive(false);
                 if(moleObjectSagot[i].IsRight == true) {
                     int randomIndex = Random.Range(0, moleObjectSagot.Count);
                     moleObjectSagot[i].Obj = correctChoices[Random.Range(0, correctChoices.Length)];
@@ -110,17 +115,6 @@ public class Wakamol : MonoBehaviour
             }   
         }
     }
-    // public void CheckIfVisibleWrong() {
-    //     for(int i = 0; i < moleObjectSagot.Count; i++) {
-    //         moles[i].GetComponent<Image>().color = Color.white;
-    //         if(moleObjectSagot[i].IsVisible == false && moleObjectSagot[i].IsRight == false) {
-    //             int randomIndex = Random.Range(0, moleObjectSagot.Count);
-    //             moleObjectSagot[i].Obj = wrongChoices[Random.Range(0, wrongChoices.Length)];
-    //             choices[i].sprite = moleObjectSagot[randomIndex].Obj;  
-    //             moles[i].transform.GetChild(1).name = moleObjectSagot[randomIndex].IsRight.ToString(); 
-    //         }
-    //     }
-    // }
     void setSprites() {
         int index = Random.Range(0, moleObjectSagot.Count);
         for(int i = 0; i < moleObjectSagot.Count; i++) {
@@ -134,6 +128,8 @@ public class Wakamol : MonoBehaviour
         moleAnim[randomIndex].SetBool("Spawn", true);
         moleAnim[randomIndex].SetBool("Despawn", false);
 
+        moles[randomIndex].transform.GetChild(0).gameObject.SetActive(true);
+
         moleObjectSagot[randomIndex].IsVisible = true;
         
         // CheckIfVisibleWrong();
@@ -145,6 +141,7 @@ public class Wakamol : MonoBehaviour
         moleAnim[randomIndex].SetBool("Spawn", false);
         moleAnim[randomIndex].SetBool("Despawn", true);
 
+        moles[randomIndex].transform.GetChild(0).gameObject.SetActive(false);
         // moleObjectSagot[randomIndex].IsVisible = false;
         
 
@@ -165,6 +162,31 @@ public class Wakamol : MonoBehaviour
             moles[index].GetComponent<Image>().color = Color.green;
             Debug.Log(currentScore);
 
+            correctOrWrong[index].GetComponent<Image>().sprite = star;
+
+            switch(index) {
+                case 0:
+                    starsAnim[0].Play("Star", -1, 0f);
+                    break;
+                case 1:
+                    starsAnim[1].Play("Star2", -1, 0f);
+                    break;
+                case 2:
+                    starsAnim[2].Play("Star3", -1, 0f);
+                    break;
+                case 3:
+                    starsAnim[3].Play("Star4", -1, 0f);
+                    break;
+                case 4:
+                    starsAnim[4].Play("Star6", -1, 0f);
+                    break;
+                case 5:
+                    starsAnim[5].Play("Star5", -1, 0f);
+                    break;
+                default:
+                    break;
+            }
+
             moles[index].transform.GetChild(1).GetComponent<TMP_Text>().name = "Done";
 
             if(currentScore == requiredScore) {
@@ -180,7 +202,33 @@ public class Wakamol : MonoBehaviour
         else if(moles[index].transform.GetChild(1).GetComponent<TMP_Text>().name == "False"){
             moles[index].transform.GetChild(1).GetComponent<TMP_Text>().name = "Done";
             timeRemaining-= 10f;
+            
             moles[index].GetComponent<Image>().color = Color.red;
+
+            correctOrWrong[index].GetComponent<Image>().sprite = wrong;
+
+            switch(index) {
+                case 0:
+                    starsAnim[0].Play("Star", -1, 0f);
+                    break;
+                case 1:
+                    starsAnim[1].Play("Star2", -1, 0f);
+                    break;
+                case 2:
+                    starsAnim[2].Play("Star3", -1, 0f);
+                    break;
+                case 3:
+                    starsAnim[3].Play("Star4", -1, 0f);
+                    break;
+                case 4:
+                    starsAnim[4].Play("Star6", -1, 0f);
+                    break;
+                case 5:
+                    starsAnim[5].Play("Star5", -1, 0f);
+                    break;
+                default:
+                    break;
+            }
         } 
         else if(moles[index].transform.GetChild(1).GetComponent<TMP_Text>().name == "Done") {
             Debug.Log("Done");
@@ -190,6 +238,7 @@ public class Wakamol : MonoBehaviour
         moleAnim[index].SetBool("Spawn", false);
 
         moles[index].interactable = false;
+        moles[index].transform.GetChild(0).gameObject.SetActive(false);
     }
     public void StartGame() {
         questionPanel.gameObject.SetActive(false);

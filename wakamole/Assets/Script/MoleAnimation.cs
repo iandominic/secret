@@ -25,77 +25,63 @@ public class MoleAnimation : MonoBehaviour
         
     }
 
+    IEnumerator WaitAnim() {
+        yield return new WaitForSeconds(2);
+    }
+
     public void Interactable() { 
-        // btn.interactable = true;
-        Debug.Log("zxczc");
-        // wakamol.CheckIfVisible();
-         wakamol.moleObjectSagot[0].IsVisible = false;
+        wakamol.moles[0].transform.GetChild(0).gameObject.SetActive(false);
+        wakamol.moleObjectSagot[0].IsVisible = false;
     }
      public void Interactable2() {
-        // btn2.interactable = true;
-        Debug.Log("zxczc");
-        // wakamol.CheckIfVisible();
-    
-    wakamol.moleObjectSagot[1].IsVisible = false;
+        wakamol.moles[1].transform.GetChild(0).gameObject.SetActive(false);
+        wakamol.moleObjectSagot[1].IsVisible = false;
     }
      public void Interactable3() {
-        // btn3.interactable = true;
-        Debug.Log("zxczc");
-        // wakamol.CheckIfVisible();
+        wakamol.moles[2].transform.GetChild(0).gameObject.SetActive(false);
         wakamol.moleObjectSagot[2].IsVisible = false;
     }
      public void Interactable4() {
-        // btn4.interactable = true;
-        Debug.Log("zxczc");
-        // wakamol.CheckIfVisible();
+        wakamol.moles[3].transform.GetChild(0).gameObject.SetActive(false);
         wakamol.moleObjectSagot[3].IsVisible = false;
     }
      public void Interactable5() {
-        // btn5.interactable = true;
-        Debug.Log("zxczc");
-        // wakamol.CheckIfVisible();
+        wakamol.moles[4].transform.GetChild(0).gameObject.SetActive(false);
         wakamol.moleObjectSagot[4].IsVisible = false;
     }
      public void Interactable6() {
-        // btn6.interactable = true;
-        Debug.Log("zxczc");
-        // wakamol.CheckIfVisible();
+        wakamol.moles[5].transform.GetChild(0).gameObject.SetActive(false);
         wakamol.moleObjectSagot[5].IsVisible = false;
     }
     //////////////////////////////////////////
     public void test() { 
-        // wakamol.CheckIfDone();
-         btn.interactable = true;
-         wakamol.CheckIfDone();
+        btn.interactable = true;
+        wakamol.CheckIfDone();
+        wakamol.moles[0].transform.GetChild(0).gameObject.SetActive(true);
     }
      public void test2() {
-        // wakamol.CheckIfDone();
-         btn2.interactable = true;
-        
+        btn2.interactable = true;
         wakamol.CheckIfDone();
+        wakamol.moles[1].transform.GetChild(0).gameObject.SetActive(true);
     }
      public void test3() {
-    //    wakamol.CheckIfDone();
-     btn3.interactable = true;
-     wakamol.CheckIfDone();
-        
+        btn3.interactable = true;
+        wakamol.CheckIfDone();
+        wakamol.moles[2].transform.GetChild(0).gameObject.SetActive(true);   
     }
      public void test4() {
-        // wakamol.CheckIfDone();
-         btn4.interactable = true;
-         wakamol.CheckIfDone();
-        
+        btn4.interactable = true;
+        wakamol.CheckIfDone();
+        wakamol.moles[3].transform.GetChild(0).gameObject.SetActive(true); 
     }
      public void test5() {
-        // wakamol.CheckIfDone();
-         btn5.interactable = true;
-         wakamol.CheckIfDone();
-        
+        btn5.interactable = true;
+        wakamol.CheckIfDone();
+        wakamol.moles[4].transform.GetChild(0).gameObject.SetActive(true);
     }
      public void test6() {
-        // wakamol.CheckIfDone();
-         btn6.interactable = true;
-         wakamol.CheckIfDone();
-        
+        btn6.interactable = true;
+        wakamol.CheckIfDone();
+        wakamol.moles[5].transform.GetChild(0).gameObject.SetActive(true);
     }
 }
